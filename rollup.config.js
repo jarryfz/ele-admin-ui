@@ -1,27 +1,29 @@
 import resolve from "@rollup/plugin-node-resolve";
-import commonjs from 'rollup-plugin-commonjs';
-import vuePlugin from 'rollup-plugin-vue';
-import postcss from 'rollup-plugin-postcss';
-import babel from '@rollup/plugin-babel';
-import delFile from 'rollup-plugin-delete';
-import progress from 'rollup-plugin-progress';
-import { eslint } from 'rollup-plugin-eslint';
-import pkg from './package.json' assert {type: 'json'}
+import json from "@rollup/plugin-json";
+import { readFileSync } from "fs";
+import commonjs from "rollup-plugin-commonjs";
+import vuePlugin from "rollup-plugin-vue";
+import postcss from "rollup-plugin-postcss";
+import babel from "@rollup/plugin-babel";
+import delFile from "rollup-plugin-delete";
+import progress from "rollup-plugin-progress";
+import { eslint } from "rollup-plugin-eslint";
+const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 export default {
-  input: 'src/index.js',
+  input: "src/index.js",
   output: [
     {
-      file: 'lib/index-umd.js',
-      name: 'eleAdminUi',
-      format: 'umd',
+      file: "lib/index-umd.js",
+      name: "eleAdminUi",
+      format: "umd",
       globals: {
-        vue: 'Vue',
-        'element-ui': 'ELEMENT'
+        vue: "Vue",
+        "element-ui": "ELEMENT"
       }
     },
     {
-      file: 'lib/index-es.js',
-      format: 'es'
+      file: "lib/index-es.js",
+      format: "es"
     }
   ],
   external: [
@@ -29,11 +31,12 @@ export default {
     ...Object.keys(pkg.dependencies || {})
   ],
   plugins: [
+    json(),
     progress({
-      format: '[:bar] :percent (:current/:total)'
+      format: "[:bar] :percent (:current/:total)"
     }),
     delFile({
-      targets: 'lib/*'
+      targets: "lib/*"
     }),
     resolve({
       extensions: [".vue"]
@@ -46,7 +49,7 @@ export default {
     commonjs(),
     eslint({
       fix: true, // 自动修复
-      include: ['src/**/*.js', 'src/**/*.vue']
+      include: ["src/**/*.js", "src/**/*.vue"]
     }),
     vuePlugin({
       css: false,
@@ -61,7 +64,11 @@ export default {
     }),
     babel({
       babelHelpers: "runtime",
-      exclude: "**/node_modules/**"
+      // exclude: "**/node_modules/**",
+      extensions: [".js", ".jsx", ".es6", ".es", ".mjs", ".vue"],
+      filter: id=>{
+        return /(\.js|\.jsx|\.es6|\.es|\.mjs)$/.test(id) && !/node_modules/.test(id)
+      }
     }),
   ]
 }
