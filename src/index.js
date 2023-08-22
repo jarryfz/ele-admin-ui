@@ -2,9 +2,9 @@ import ElAdmin from "./components/index.vue"
 
 const components = [
   ElAdmin
-]
+],
 
-const install = (Vue) => {
+ install = (Vue) => {
   components.forEach(component => {
     component.name && Vue.component(component.name, component)
   })

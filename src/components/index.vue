@@ -8,7 +8,7 @@
 </template>
 <script>
 export default {
-  name: 'EleAdmin',
+  name: "EleAdmin",
   data() {
     return {
       msg: "hello rollup"

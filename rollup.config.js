@@ -5,6 +5,7 @@ import postcss from 'rollup-plugin-postcss';
 import babel from '@rollup/plugin-babel';
 import delFile from 'rollup-plugin-delete';
 import progress from 'rollup-plugin-progress';
+import { eslint } from 'rollup-plugin-eslint';
 import pkg from './package.json' assert {type: 'json'}
 export default {
   input: 'src/index.js',
@@ -43,6 +44,10 @@ export default {
       sourcemap: true,
     }),
     commonjs(),
+    eslint({
+      fix: true, // 自动修复
+      include: ['src/**/*.js', 'src/**/*.vue']
+    }),
     vuePlugin({
       css: false,
       compileTemplate: true,
