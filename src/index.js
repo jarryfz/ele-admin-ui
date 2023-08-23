@@ -1,15 +1,17 @@
 import ElAdmin from "./components/index.vue"
-
+import EleTable from "./components/ele-table/index.vue"
 const components = [
-  ElAdmin
+  ElAdmin,
+  EleTable
 ],
 
  install = (Vue) => {
   components.forEach(component => {
-    component.name && Vue.component(component.name, component)
+    Vue.component(component.name, component)
   })
 }
 
 export default {
-  install
+  install,
+  EleTable
 }
