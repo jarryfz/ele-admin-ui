@@ -58,91 +58,20 @@
         label="序号"
         :align="$attrs.align || 'center'"
       />
-      <!-- 普通列，适用于大多数情况 -->
-      <template v-for="item in $attrs.columns">
-        <el-table-column
-          :key="item.prop"
-          :label="item.label"
-          :prop="item.prop"
-          :width="item.width"
-          :min-width="item.minWidth"
-          :column-key="item.columnKey"
-          :align="$attrs.align || 'center'"
-          :sortable="item.sortable"
-          :show-overflow-tooltip="item.showOverflowTooltip"
-          :fixed="item.fixed"
-          :formatter="item.formatter"
-          :class-name="item.className"
-          :render-header="item.renderHeader"
-          :sort-method="item.sortMethod"
-          :sort-by="item.sortBy"
-          :sort-orders="item.sortOrders"
-          :resizable="item.resizable"
-          :header-align="item.headerAlign"
-          :label-class-name="item.labelClassName"
-          :filters="item.filters"
-          :filter-placement="item.filterPlacement"
-          :filter-multiple="item.filterMultiple"
-          :filter-method="item.filterMethod"
-          :filtered-value="item.filteredValue"
-        >
-          <template slot-scope="scope">
-            <!-- slot插槽 -->
-            <slot v-if="item.slot" :name="item.prop" :data="item.row" />
-            <!-- jsx -->
-            <table-render v-else-if="item.render" :render="item.render" :row="scope.row" :index="scope.$index"></table-render>
-            <!-- 自定义header -->
-            <template v-else-if="item.slotHeader" slot="header" slot-scope="scope">
-              <table-render :render="item.render" :row="scope.row" :index="scope.$index"></table-render>
-            </template>
-            <el-image
-              v-else-if="item.image"
-              :style="item.style || { width: '60px', height: '60px' }"
-              :src="scope.row[item.prop]"
-              :fit="item.fit || 'fill'"
-              :preview-src-list="[scope.row[item.prop]]"
-            />
-            <!-- 操作栏 -->
-            <template v-else-if="item.btns">
-              <div v-for="val in item.btns" :key="val.label" class="btns">
-                <table-render
-                  v-if="val.render"
-                  :render="val.render"
-                  :row="scope.row"
-                  :index="scope.$index"
-                />
-                <el-button
-                  v-else-if="val.show == undefined ? true : val.show"
-                  :type="val.type"
-                  :icon="val.icon"
-                  :size="val.size ? item.size : 'small'"
-                  :disabled="
-                    val.isDisabled
-                      ? val.isDisabled(scope.row, scope.$index)
-                      : false
-                  "
-                  @click.native.stop.prevent="
-                    val.onClick(scope.row, scope.$index)
-                  "
-                >
-                  {{ val.label }}
-                </el-button>
-              </div>
-            </template>
-            <span v-else>{{ scope.row[item.prop] }}</span>
-          </template>
-        </el-table-column>
-      </template>
+      <!-- 普通列，适用于大多数情况，包含递归，用于多级表头 -->
+      <table-column :columns="columns" :align="$attrs.align" />
     </el-table>
   </div>
 </template>
 <script>
 import TableRender from "./render.vue"
+import tableColumn from "./table-column.jsx"
 export default {
   name: "EleTable",
   inheritAttrs: false,
   components: {
-    TableRender
+    TableRender,
+    tableColumn
   },
   props: {
     // 是否多选
@@ -169,6 +98,11 @@ export default {
     expandRender: {
       type: Function,
       default: () => ({})
+    },
+    // 列配置
+    columns: {
+      type: Array,
+      default: () => ([])
     },
     // 这一行的 CheckBox 是否可以勾选
     selectable: {
@@ -242,9 +176,6 @@ export default {
     return {
       radioValue: ""
     }
-  },
-  mounted() {
-    console.log(this.$attrs)
   },
   methods: {
     // 单选change事件

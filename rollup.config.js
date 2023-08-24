@@ -66,7 +66,7 @@ export default {
       babelHelpers: "runtime",
       // exclude: "**/node_modules/**",
       extensions: [".js", ".jsx", ".es6", ".es", ".mjs", ".vue"],
-      filter: id=>{
+      filter: id => {
         return /(\.js|\.jsx|\.es6|\.es|\.mjs)$/.test(id) && !/node_modules/.test(id)
       }
     }),
