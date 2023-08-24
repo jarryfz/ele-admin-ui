@@ -1,8 +1,8 @@
-import ElAdmin from "./components/index.vue"
 import EleTable from "./components/ele-table/index.vue"
+import EleForm from "./components/ele-form/index.vue"
 const components = [
-  ElAdmin,
-  EleTable
+  EleTable,
+  EleForm
 ],
 
  install = (Vue) => {
@@ -13,5 +13,6 @@ const components = [
 
 export default {
   install,
-  EleTable
+  EleTable,
+  EleForm
 }
