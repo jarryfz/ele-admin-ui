@@ -1,4 +1,4 @@
-import tableRender from './render.vue'
+import tableRender from '../render.vue'
 export default {
   functional: true,
   components: {
@@ -34,7 +34,6 @@ export default {
           filtered-value={item.filteredValue}
           scopedSlots={{
             default: (scope) => {
-              console.log(scope)
               const { $index, row } = scope;
               return (
                 <div>

@@ -64,7 +64,7 @@
   </div>
 </template>
 <script>
-import TableRender from "./render.vue"
+import TableRender from "../render.vue"
 import tableColumn from "./table-column.jsx"
 export default {
   name: "EleTable",
@@ -183,9 +183,9 @@ export default {
       this.$emit("handle-radio-change", row, index)
     },
     // 当用户手动勾选数据行的 Checkbox 时触发的事件
-    select(selection, row) {
-      this.$emit("select", selection, row)
-    },
+    // select(selection, row) {
+    //   this.$emit("select", selection, row)
+    // },
     // 当用户手动勾选全选 Checkbox 时触发的事件
     selectAll(selection) {
       this.$emit("selectAll", selection)
