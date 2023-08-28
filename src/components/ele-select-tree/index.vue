@@ -4,8 +4,10 @@
       ref="eleSelectTreeRef"
       style="width: 100%;"
       :value="value"
+      multiple
+      @remove-tag="handleRemoveTag"
     >
-      <el-option :label="optionData.label" :value="optionData.value" >
+      <el-option :label="optionData.label" :value="optionData.value">
         <el-tree
           ref="eleTreeRef"
           :data="$attrs.data"
@@ -43,6 +45,7 @@ export default {
   data() {
     return {
       value: "",
+      list: [],
       optionData: {
         label: "",
         value: ""
@@ -63,7 +66,12 @@ export default {
       const checkeNodes = this.$refs.eleTreeRef.getCheckedNodes(),
        checkedKeys = this.$refs.eleTreeRef.getCheckedKeys();
       this.value = checkeNodes.map(item => item.label);
+      this.list = checkeNodes;
       this.$emit("checkChange", checkeNodes, checkedKeys);
+    },
+    handleRemoveTag(tag) {
+      const obj = this.list.find(item => item.label === tag);
+      this.$refs.eleTreeRef.setChecked(obj, false, true);
     }
   }
 }
@@ -73,5 +81,11 @@ export default {
   height: 200px;
   overflow-y: auto;
   background: #fff;
+}
+::v-deep.el-select {
+  .el-select__tags {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
 }
 </style>
