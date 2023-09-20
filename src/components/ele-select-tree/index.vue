@@ -5,13 +5,14 @@
       style="width: 100%;"
       :value="value"
       multiple
+      :collapse-tags="$attrs.collapseTags"
       @remove-tag="handleRemoveTag"
     >
       <el-option :label="optionData.label" :value="optionData.value">
         <el-tree
           ref="eleTreeRef"
           :data="$attrs.data"
-          :show-checkbox="$attrs.showCheckbox"
+          :show-checkbox="$attrs.radio ? false : $attrs.showCheckbox"
           :node-key="$attrs.nodeKey || 'id'"
           :default-expanded-keys="$attrs.defaultExpandedKeys"
           :default-checked-keys="$attrs.defaultCheckedKeys"
@@ -20,6 +21,10 @@
           @node-click="handleNodeClick"
           @check-change="handleCheckChange"
         >
+          <span slot-scope="{ node, data }">
+            <el-radio v-model="list" v-if="$attrs.radio" :label="data.id" @input="handleRadioChange(data)">{{node.label}}</el-radio>
+            <span v-else>{{ node.label }}</span>
+          </span>
         </el-tree>
       </el-option>
     </el-select>
@@ -63,11 +68,15 @@ export default {
     },
     handleCheckChange(data, checked, childChecked) {
       console.log(data, checked, childChecked)
-      const checkeNodes = this.$refs.eleTreeRef.getCheckedNodes(),
-       checkedKeys = this.$refs.eleTreeRef.getCheckedKeys();
+      const checkeNodes = this.$refs.eleTreeRef.getCheckedNodes(true),
+       checkedKeys = this.$refs.eleTreeRef.getCheckedKeys(true);
       this.value = checkeNodes.map(item => item.label);
       this.list = checkeNodes;
       this.$emit("checkChange", checkeNodes, checkedKeys);
+    },
+    handleRadioChange(obj) {
+      this.value = [obj.label]
+      this.list = obj.id
     },
     handleRemoveTag(tag) {
       const obj = this.list.find(item => item.label === tag);
@@ -78,14 +87,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 ::v-deep.el-select-dropdown__item{
-  height: 200px;
-  overflow-y: auto;
+  height: auto;
+  max-height: 300px;
   background: #fff;
 }
-::v-deep.el-select {
-  .el-select__tags {
-    flex-wrap: nowrap;
-    overflow: hidden;
-  }
-}
+// ::v-deep.el-select {
+//   .el-select__tags {
+//     flex-wrap: nowrap;
+//     overflow: hidden;
+//   }
+// }
 </style>

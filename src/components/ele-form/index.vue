@@ -11,15 +11,7 @@
       <el-form-item
         v-for="item in formItems"
         :key="item.prop"
-        :label="item.label"
-        :prop="item.prop"
-        :label-width="item.labelWidth"
-        :required="item.required"
-        :rules="item.rules"
-        :error="item.error"
-        :show-message="item.showMessage"
-        :inline-message="item.inlineMessage"
-        :size="item.size"
+        v-bind="item"
       >
         <template>
           <slot></slot>
@@ -115,6 +107,7 @@
 
         <!-- 联级选择器 -->
         <el-cascader
+          style="width: 100%;"
           v-else-if="item.cascader"
           v-model="formData[item.prop]"
           v-bind="item.cascader"
@@ -132,6 +125,7 @@
 
         <!-- 日期选择器 -->
         <el-date-picker
+          style="width: 100%;"
           v-else-if="item.datePicker"
           v-model="formData[item.prop]"
           v-bind="item.datePicker"
@@ -142,6 +136,7 @@
         </el-date-picker>
         <!-- 选择器 -->
         <el-select
+          style="width: 100%;"
           v-else-if="item.select"
           v-model="formData[item.prop]"
           v-bind="item.select"
@@ -162,13 +157,18 @@
             :disabled="isDisabled(val.disabled)"
           />
         </el-select>
+        <!-- 下拉树选择 -->
+        <select-tree
+          v-if="item.selectTree"
+          v-bind="item.selectTree"
+        ></select-tree>
       </el-form-item>
       <!-- 操作按钮 -->
-      <el-form-item v-if="$attrs.isSubmit">
+      <el-form-item v-if="isSubmit">
         <el-button type="default" :size="$attrs.btnSize">取消</el-button>
         <el-button type="primary" :size="$attrs.btnSize">提交</el-button>
       </el-form-item>
-      <el-form-item v-if="$attrs.isSearch">
+      <el-form-item v-if="isSearch">
         <el-button type="primary" :size="$attrs.btnSize">搜索</el-button>
         <el-button type="default" :size="$attrs.btnSize">重置</el-button>
       </el-form-item>
@@ -176,9 +176,13 @@
   </div>
 </template>
 <script>
+import selectTree from "../ele-select-tree/index.vue";
 export default {
   name: "EleForm",
   inheritAttrs: false,
+  components: {
+    selectTree
+  },
   props: {
     rules: {
       type: Object,
@@ -187,7 +191,9 @@ export default {
     formItems: {
       type: Array,
       default: () => ([])
-    }
+    },
+    isSubmit: Boolean,
+    isSearch: Boolean,
   },
   data() {
     const formData = this.formItems.reduce((data, item) => {
