@@ -1,5 +1,6 @@
 <template>
   <div class="ele-table">
+    <ele-form v-bind="$attrs.configForm"></ele-form>
     <el-table
       ref="eleTableRef"
       v-on="$listeners"
@@ -49,19 +50,34 @@
         :align="$attrs.align || 'center'"
       />
       <!-- 普通列，适用于大多数情况，包含递归，用于多级表头 -->
-      <table-column :columns="columns" :align="$attrs.align" />
+      <table-column :columns="tableConfigOption.columns" :align="$attrs.align" />
     </el-table>
+    <el-pagination
+      class="ele-pagination"
+      v-if="pagination"
+      background
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="defaultParams.page"
+      :page-sizes="[10, 20, 30, 50, 100, 200]"
+      :page-size="defaultParams.limit"
+      layout="prev, pager, next, jumper, total, sizes"
+      :total="tableConfigOption.total"
+    >
+    </el-pagination>
   </div>
 </template>
 <script>
 import TableRender from "../render.vue"
 import tableColumn from "./table-column.jsx"
+import EleForm from "../ele-form/index.vue"
 export default {
   name: "EleTable",
   inheritAttrs: false,
   components: {
     TableRender,
-    tableColumn
+    tableColumn,
+    EleForm
   },
   props: {
     // 是否多选
@@ -84,15 +100,25 @@ export default {
       type: Boolean,
       default: false
     },
+    defaultParams: {
+      type: Object,
+      default: () => ({
+        page: 1,
+        limit: 10,
+      })
+    },
     // 展开行render
     expandRender: {
       type: Function,
       default: () => ({})
     },
-    // 列配置
-    columns: {
-      type: Array,
-      default: () => ([])
+    // 配置
+    tableConfigOption: {
+      type: Object,
+      default: () => ({
+        total: 0,
+        columns: []
+      })
     },
     // 这一行的 CheckBox 是否可以勾选
     selectable: {
@@ -111,6 +137,11 @@ export default {
       type: [Function, String],
       default: (row) => row.id
     },
+    // 是否分页
+    pagination: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -121,10 +152,18 @@ export default {
     // 单选change事件
     radioChange(row, index) {
       this.$emit("handle-radio-change", row, index)
+    },
+    handleSizeChange(val) {
+      this.$emit("handle-size-change", val)
+    },
+    handleCurrentChange(val) {
+      this.$emit("handle-current-change", val)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-
+.ele-pagination {
+  margin: 20px 0;
+}
 </style>
