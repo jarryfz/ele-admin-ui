@@ -11,7 +11,15 @@
       <el-form-item
         v-for="item in formItems"
         :key="item.prop"
-        v-bind="item"
+        :prop="item.prop"
+        :label="item.label"
+        :label-width="item.labelWidth"
+        :required="item.required || false"
+        :rules="item.rules"
+        :error="item.error"
+        :show-message="item.showMessage || true"
+        :inline-message="item.inlineMessage || false"
+        :size="item.size"
       >
         <template>
           <slot></slot>
@@ -22,17 +30,17 @@
 
         <!-- 单选框 -->
         <el-radio-group
-          v-if="item.radio"
+          v-if="item.type === 'radio'"
           v-model="formData[item.prop]"
           v-bind="item.radio"
-          @input="item.radio.input"
+          @input="item.radio.onInput"
         >
           <template v-if="item.radio.isButton">
             <el-radio-button
             v-for="(radio, i) in item.radio.list"
               :key="i"
               v-bind="radio"
-              @input="radio.input"
+              @input="radio.onInput"
             ></el-radio-button>
           </template>
           <template v-else>
@@ -40,14 +48,14 @@
               v-for="(radio, i) in item.radio.list"
               :key="i"
               v-bind="radio"
-              @input="radio.input"
+              @input="radio.onInput"
             ></el-radio>
           </template>
         </el-radio-group>
 
         <!-- 多选框 -->
         <el-checkbox-group
-          v-else-if="item.checkbox"
+          v-else-if="item.type === 'checkbox'"
           v-model="formData[item.prop]"
           v-bind="item.checkbox"
           @change="item.checkbox.change"
@@ -70,7 +78,7 @@
 
         <!-- 输入框 -->
         <el-input
-          v-else-if="item.input"
+          v-else-if="item.type === 'input'"
           v-bind="item.input"
           v-model="formData[item.prop]"
           @focus="item.input.onFocus && item.input.onFocus"
@@ -89,7 +97,7 @@
 
         <!-- 待输入建议 -->
         <el-autocomplete
-          v-if="item.autocomplete"
+          v-if="item.type === 'autocomplete'"
           v-model.trim="formData[item.prop]"
           v-bind="item.autocomplete"
           @select="item.autocomplete.onSelect && item.autocomplete.onSelect"
@@ -108,7 +116,7 @@
         <!-- 联级选择器 -->
         <el-cascader
           style="width: 100%;"
-          v-else-if="item.cascader"
+          v-else-if="item.type === 'cascader'"
           v-model="formData[item.prop]"
           v-bind="item.cascader"
           @change="item.cascader.onChange && item.cascader.onChange"
@@ -126,7 +134,7 @@
         <!-- 日期选择器 -->
         <el-date-picker
           style="width: 100%;"
-          v-else-if="item.datePicker"
+          v-else-if="item.type === 'datePicker'"
           v-model="formData[item.prop]"
           v-bind="item.datePicker"
           @change="item.datePicker.onChange && item.datePicker.onChange"
@@ -137,7 +145,7 @@
         <!-- 选择器 -->
         <el-select
           style="width: 100%;"
-          v-else-if="item.select"
+          v-else-if="item.type === 'select'"
           v-model="formData[item.prop]"
           v-bind="item.select"
           @change="item.select.onChange && item.select.onChange"
@@ -152,14 +160,14 @@
           <el-option
             v-for="option in item.select.options"
             :key="option.label"
-            :label="val.label"
-            :value="val.value"
-            :disabled="isDisabled(val.disabled)"
+            :label="option.label"
+            :value="option.value"
+            :disabled="isDisabled(option.disabled)"
           />
         </el-select>
         <!-- 下拉树选择 -->
         <select-tree
-          v-if="item.selectTree"
+          v-if="item.type === 'selectTree'"
           v-bind="item.selectTree"
         ></select-tree>
       </el-form-item>
@@ -197,7 +205,7 @@ export default {
   },
   data() {
     const formData = this.formItems.reduce((data, item) => {
-      data[item.prop] = item.defaultSelect || "";
+      data[item.prop] = item.defaultValue || "";
       return data;
     }, {});
     return {

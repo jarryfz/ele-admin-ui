@@ -1,6 +1,6 @@
 <template>
   <div class="ele-table">
-    <ele-form v-bind="$attrs.configForm"></ele-form>
+    <ele-form v-bind="$attrs.formConfigOption"></ele-form>
     <el-table
       ref="eleTableRef"
       v-on="$listeners"
