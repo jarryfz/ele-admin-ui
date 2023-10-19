@@ -1,6 +1,6 @@
 <template>
   <div class="ele-table">
-    <ele-form v-bind="$attrs.formConfigOption"></ele-form>
+    <ele-form :form-items="formItems" :is-search="true" :inline="true"></ele-form>
     <el-table
       ref="eleTableRef"
       v-on="$listeners"
@@ -71,6 +71,7 @@
 import TableRender from "../render.vue"
 import tableColumn from "./table-column.jsx"
 import EleForm from "../ele-form/index.vue"
+import fixedHeader from "./fixedHeader.js"
 export default {
   name: "EleTable",
   inheritAttrs: false,
@@ -79,7 +80,12 @@ export default {
     tableColumn,
     EleForm
   },
+  mixins: [fixedHeader],
   props: {
+    formItems: {
+      type: Array,
+      default: () => ([])
+    },
     // 是否多选
     multipleSelect: {
       type: Boolean,
@@ -145,7 +151,8 @@ export default {
   },
   data() {
     return {
-      radioValue: ""
+      radioValue: "",
+      parent: "ele-table"
     }
   },
   methods: {

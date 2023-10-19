@@ -13,7 +13,7 @@
     "vue",
     "component"
   ],
-  "author": "jarry",
+  "author": "jarry <1369743864@qq.com>",
   "license": "MIT",
   "dependencies": {
     "vue": "^2.7.14"
