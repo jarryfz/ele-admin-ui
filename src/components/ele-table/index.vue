@@ -72,6 +72,7 @@ import TableRender from "../render.vue"
 import tableColumn from "./table-column.jsx"
 import EleForm from "../ele-form/index.vue"
 import fixedHeader from "./fixedHeader.js"
+import mixin from "./index.js"
 export default {
   name: "EleTable",
   inheritAttrs: false,
@@ -81,6 +82,7 @@ export default {
     EleForm
   },
   mixins: [fixedHeader],
+  // mixins: [mixin],
   props: {
     formItems: {
       type: Array,
